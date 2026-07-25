@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CONTACT SHEET</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@300;400;500;700&family=Nanum+Gothic+Coding:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   A. 필름 콘택트 시트 — 암실 인화지
+   ============================================================ */
+:root{
+  --void:#0A0A0B;
+  --sheet:#121213;
+  --sheet2:#171718;
+  --line:#242426;
+  --line2:#37373A;
+  --paper:#E8E4DC;      /* 인화지 흰색 */
+  --dim:#7A7873;
+  --grease:#E03A2F;     /* 그리스펜 빨강 */
+  --ink:#C9C4B8;
+  --win:920px;
+  --mono:'IBM Plex Mono','Nanum Gothic Coding',monospace;
+  --kmono:'Nanum Gothic Coding','IBM Plex Mono',monospace;
+  --sans:'IBM Plex Sans KR',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--void);color:var(--ink);font-family:var(--sans);font-weight:300;overflow:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:60;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 40%,transparent 45%,rgba(0,0,0,.8) 100%)}
+body.grain::after{content:"";position:fixed;inset:0;z-index:61;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/></filter><rect width='120' height='120' filter='url(%23n)' opacity='.28'/></svg>")}
+::selection{background:var(--grease);color:#fff}
+:focus-visible{outline:2px solid var(--grease);outline-offset:2px}
+::-webkit-scrollbar{width:9px}::-webkit-scrollbar-track{background:var(--sheet)}
+::-webkit-scrollbar-thumb{background:var(--line2)}
+
+#stage{position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;
+  padding:clamp(10px,2.4vw,32px)}
+.wrap{width:100%;max-width:var(--win);display:none;flex-direction:column;gap:9px}
+.wrap.on{display:flex}
+.wrap-top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--dim)}
+.wrap-top b{color:var(--paper);font-weight:500;letter-spacing:.3em}
+.wrap-top .push{margin-left:auto}
+.linkbtn{background:none;border:none;color:var(--line2);font-family:var(--mono);font-size:10px;
+  letter-spacing:.18em;cursor:pointer}
+.linkbtn:hover{color:var(--paper)}
+
+/* 필름 구멍 테두리 */
+.sheet{border:1px solid var(--line2);background:var(--sheet);display:flex;flex-direction:column;
+  height:min(730px,84vh);box-shadow:0 22px 64px rgba(0,0,0,.75);position:relative}
+.perf{position:absolute;top:0;bottom:0;width:16px;z-index:3;
+  background-image:repeating-linear-gradient(180deg,transparent 0 9px,var(--void) 9px 20px);
+  background-color:var(--sheet2);opacity:.9}
+.perf.l{left:0;border-right:1px solid var(--line)}
+.perf.r{right:0;border-left:1px solid var(--line)}
+.sheet-head{margin:0 16px;display:flex;align-items:center;gap:13px;flex-wrap:wrap;padding:11px 14px;
+  border-bottom:1px solid var(--line);font-family:var(--mono);font-size:10px;
+  letter-spacing:.16em;color:var(--dim)}
+.sheet-head .roll{color:var(--paper)}
+.sheet-head .push{margin-left:auto}
+.sheet-head .iso{color:var(--grease)}
+
+.tabs{margin:0 16px;display:flex;border-bottom:1px solid var(--line);overflow-x:auto;flex-shrink:0}
+.tab{background:none;border:none;color:var(--dim);font-family:var(--mono);font-size:11px;
+  letter-spacing:.18em;padding:11px 18px;cursor:pointer;white-space:nowrap;position:relative}
+.tab .num{color:var(--line2);margin-right:9px}
+.tab:hover{color:var(--paper)}
+.tab.on{color:var(--paper)}
+.tab.on::after{content:"";position:absolute;left:14px;right:14px;bottom:-1px;height:2px;background:var(--grease)}
+
+#main{flex:1;min-height:0;overflow-y:auto;margin:0 16px}
+.screen{display:none;padding:26px 20px 44px}
+.screen.on{display:block;animation:fade .3s}
+@keyframes fade{from{opacity:0}}
+.foot{margin:0 16px;border-top:1px solid var(--line);display:flex;align-items:center;flex-shrink:0}
+.foot .cell{padding:8px 12px;border-right:1px solid var(--line);font-family:var(--mono);
+  font-size:9.5px;letter-spacing:.16em;color:var(--dim);white-space:nowrap}
+.ticker{flex:1;overflow:hidden;padding:8px 0;min-width:0}
+.ticker span{display:inline-block;white-space:nowrap;padding-left:100%;font-family:var(--mono);
+  font-size:9.5px;letter-spacing:.18em;color:var(--line2);animation:slide 34s linear infinite}
+@keyframes slide{to{transform:translateX(-100%)}}
+.navb{display:flex;border-left:1px solid var(--line)}
+.navb button{background:none;border:none;border-right:1px solid var(--line);color:var(--dim);
+  font-family:var(--mono);font-size:10px;padding:8px 12px;cursor:pointer;letter-spacing:.14em}
+.navb button:last-child{border-right:none}
+.navb button:hover:not(:disabled){color:var(--grease)}
+.navb button:disabled{color:var(--line2);cursor:default}
+
+/* ---------- 로딩(현상) 화면 ---------- */
+#dev{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;flex:1}
+.devbox{width:min(360px,72%);border:1px solid var(--line2);background:var(--sheet2);padding:22px}
+.devbox h3{font-family:var(--mono);font-size:10px;letter-spacing:.28em;color:var(--grease);margin-bottom:16px}
+.devrow{font-family:var(--kmono);font-size:11.5px;color:var(--dim);line-height:2;display:flex;gap:10px}
+.devrow .d{flex:1;border-bottom:1px dotted var(--line2);transform:translateY(-4px)}
+.devrow.done{color:var(--paper)}
+.devbar{height:3px;background:var(--line);margin-top:16px}
+.devbar i{display:block;height:100%;width:0;background:var(--grease);transition:width .3s}
+.enter{background:none;border:1px solid var(--line2);color:var(--line2);font-family:var(--mono);
+  font-size:11px;letter-spacing:.24em;padding:11px 26px;cursor:not-allowed}
+.enter.on{border-color:var(--paper);color:var(--paper);cursor:pointer}
+.enter.on:hover{background:var(--paper);color:#000}
+
+/* ---------- 문서 ---------- */
+.frame-label{font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;color:var(--grease);
+  margin-bottom:16px;display:flex;align-items:center;gap:11px}
+.frame-label::after{content:"";flex:1;height:1px;background:var(--line)}
+h1.t{font-family:var(--mono);font-size:clamp(17px,2.4vw,22px);font-weight:500;letter-spacing:.14em;
+  color:var(--paper);margin-bottom:8px}
+.sub{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--dim);margin-bottom:30px}
+
+.kv{display:flex;align-items:baseline;gap:9px;font-family:var(--kmono);font-size:12.5px;
+  line-height:2.05;color:var(--ink)}
+.kv .k{color:var(--dim);white-space:nowrap;font-family:var(--mono);font-size:10px;letter-spacing:.16em}
+.kv .lead{flex:1;min-width:16px;border-bottom:1px dotted var(--line2);transform:translateY(-4px)}
+.kv .v{text-align:right;color:var(--paper)}
+.kv .v strong{color:var(--grease);font-weight:700}
+.kvlist{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:13px 0;margin-bottom:34px}
+
+.block{margin-bottom:34px}
+.block.untitled{border-top:1px solid var(--line);padding-top:22px}
+.block h2{font-family:var(--mono);font-size:10px;letter-spacing:.26em;color:var(--paper);
+  display:flex;align-items:center;gap:11px;padding-bottom:8px;border-bottom:1px solid var(--line);
+  margin-bottom:16px}
+.block h2 .id{color:var(--grease)}
+.block h2 .id::after{content:" ·"}
+.block p{font-family:var(--kmono);font-size:12.5px;line-height:2.05;color:var(--ink);
+  max-width:74ch;margin-bottom:12px}
+.bullets{list-style:none;max-width:74ch}
+.bullets li{position:relative;padding-left:17px;font-family:var(--kmono);font-size:12.5px;
+  line-height:2.05;color:var(--ink);margin-bottom:6px}
+.bullets li::before{content:"—";position:absolute;left:0;color:var(--dim)}
+.nglist{list-style:none;border-left:2px solid var(--grease);padding-left:15px}
+.nglist li{position:relative;padding-left:18px;font-family:var(--kmono);font-size:12.5px;
+  line-height:2.05;color:var(--ink);margin-bottom:10px;max-width:72ch}
+.nglist li::before{content:"\00d7";position:absolute;left:0;color:var(--grease)}
+.endnote{border-top:1px solid var(--line);margin-top:32px;padding-top:16px;font-family:var(--mono);
+  font-size:9.5px;letter-spacing:.16em;color:var(--line2)}
+
+/* ---------- 콘택트 시트 페어 ---------- */
+.strip{margin-bottom:26px;border:1px solid var(--line);background:var(--sheet2)}
+.strip-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:8px 13px;
+  border-bottom:1px solid var(--line);font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.2em;color:var(--dim);background:var(--sheet)}
+.strip-bar .roll{color:var(--paper)}
+.strip-bar .st{margin-left:auto;color:var(--grease)}
+.strip-grid{display:grid;grid-template-columns:auto 1fr}
+.frames{display:flex;gap:8px;padding:14px;background:
+  repeating-linear-gradient(180deg,var(--void) 0 8px,transparent 8px 18px) left/12px 100% no-repeat,
+  repeating-linear-gradient(180deg,var(--void) 0 8px,transparent 8px 18px) right/12px 100% no-repeat,
+  var(--sheet2);
+  padding-left:22px;padding-right:22px;border-right:1px solid var(--line)}
+.frame{width:164px;flex-shrink:0;display:flex;flex-direction:column;position:relative}
+.frame .ph{position:relative;flex:1;min-height:214px;max-height:340px;overflow:hidden;background:#000;
+  border:1px solid var(--line2)}
+.frame .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  filter:grayscale(1) contrast(1.2) brightness(.95);transition:filter .4s ease}
+.frame:hover .ph img{filter:grayscale(0) contrast(1.02) brightness(1.03) saturate(1.05)}
+/* 터치 기기엔 호버가 없으므로 처음부터 컬러로 */
+@media(hover:none){
+  .frame .ph img{filter:grayscale(0) contrast(1.02) brightness(1.03) saturate(1.05)}
+}
+.frame .ring{position:absolute;inset:-5px;border:2px solid var(--grease);border-radius:50% 48% 52% 50%;
+  opacity:0;transition:opacity .25s;pointer-events:none;transform:rotate(-2deg)}
+.frame.mark .ring{opacity:.9}
+.frame .fno{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--grease);
+  padding-top:7px;display:flex;justify-content:space-between}
+.frame .fno em{font-style:normal;color:var(--dim)}
+.strip-info{padding:18px 20px;display:flex;flex-direction:column;min-width:0}
+.roster{border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:15px}
+.roster .kv{line-height:1.9;font-size:12px}
+.strip-info h3{font-family:var(--kmono);font-size:14.5px;font-weight:700;margin-bottom:12px;
+  display:flex;align-items:baseline;gap:11px;flex-wrap:wrap;color:var(--paper)}
+.strip-info h3 .mode{font-family:var(--mono);font-size:9.5px;font-weight:400;letter-spacing:.24em;
+  color:var(--grease)}
+.strip-info h3 .mode::before{content:"— "}
+.strip-info p{font-family:var(--kmono);font-size:12.5px;line-height:2.05;color:var(--ink);max-width:68ch}
+.tags{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);
+  font-family:var(--kmono);font-size:11.5px;color:var(--dim)}
+.tags b{color:var(--line2);font-family:var(--mono);font-size:9px;letter-spacing:.2em;
+  margin-right:10px;font-weight:400}
+.tags span{margin-right:11px}
+
+@media(max-width:820px){
+  .strip-grid{grid-template-columns:1fr}
+  .frames{border-right:none;border-bottom:1px solid var(--line);justify-content:center}
+  .frame{width:100%;max-width:160px}
+  .frame .ph{min-height:213px;max-height:none}
+  .perf{display:none}
+  .sheet-head,.tabs,#main,.foot{margin:0}
+  .sheet{height:calc(100vh - 56px)}
+}
+@media(prefers-reduced-motion:reduce){*,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body class="grain">
+<div id="stage">
+
+<!-- 현상 화면 -->
+<div class="wrap on" id="boot">
+  <div class="wrap-top"><b>CONTACT SHEET</b><span>ROLL 03 · TRI-X 400</span>
+    <span class="push"></span><button class="linkbtn" onclick="finish()">건너뛰기 [ESC]</button></div>
+  <div class="sheet">
+    <span class="perf l"></span><span class="perf r"></span>
+    <div class="sheet-head"><span class="roll">DARKROOM</span><span>·</span><span>현상 중</span>
+      <span class="push"></span><span class="iso" id="devPct">00%</span></div>
+    <div id="dev">
+      <div class="devbox">
+        <h3>DEVELOPING</h3>
+        <div id="devLog"></div>
+        <div class="devbar"><i id="devBar"></i></div>
+      </div>
+      <button class="enter" id="enterBtn" onclick="finish()" disabled>인화지 꺼내기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 본체 -->
+<div class="wrap" id="shell">
+  <div class="wrap-top"><b>CONTACT SHEET</b><span id="tbPath">SHEET 01</span>
+    <span class="push"></span><button class="linkbtn" onclick="reboot()">다시 현상 [R]</button></div>
+  <div class="sheet">
+    <span class="perf l"></span><span class="perf r"></span>
+    <div class="sheet-head">
+      <span class="roll" id="tbFile">ROLL 03 / SHEET 01</span>
+      <span class="push"></span><span id="clock">--:--:--</span>
+      <span class="iso">ISO 400</span>
+      <button class="linkbtn" onclick="document.body.classList.toggle('grain')">GRAIN</button>
+    </div>
+    <nav class="tabs" id="tabs"></nav>
+    <div id="main">
+      <section class="screen on" id="s1">
+        <div class="frame-label">SHEET 01 — NOTES ON THE ENVELOPE</div>
+        <h1 class="t">PERSONAL NOTES</h1>
+        <p class="sub" id="sub"></p>
+        <div class="kvlist" id="metaGrid"></div>
+        <div id="doc"></div>
+      </section>
+      <section class="screen" id="s2">
+        <div class="frame-label">SHEET 02 — SELECTED FRAMES</div>
+        <h1 class="t">SELECTED FRAMES</h1>
+        <p class="sub">MARKED IN GREASE PENCIL · HOVER TO PRINT</p>
+        <div id="pairList"></div>
+        <div class="endnote" id="endnote"></div>
+      </section>
+    </div>
+    <div class="foot">
+      <span class="cell" id="sbPage">01 / 02</span>
+      <span class="cell">36 EXP</span>
+      <span class="ticker"><span id="tickerTxt"></span></span>
+      <span class="navb">
+        <button id="prevBtn" onclick="go(cur-1)">◂ PREV</button>
+        <button id="nextBtn" onclick="go(cur+1)">NEXT ▸</button>
+      </span>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+/* ==========================================================================
+   ▼▼▼ 여기부터 내용만 고치면 됨 ▼▼▼
+   ========================================================================== */
+const DATA = {
+
+  /* --- 상단 / 기본 정보 -------------------------------------------------- */
+  stamp: "CLASSIFIED",
+  subline: "SUBJECT-COMPILED DOCUMENT · REVISED WITHOUT PRIOR NOTICE",
+  ticker: "ACCESS GRANTED   ·   ",
+
+  meta: [
+    ["NICKNAME",       "DAN · 유월"],
+    ["CLASSIFICATION", "성인 여성"],
+    ["ACCOUNT USE",    "사담 · NSFW · 일상"]
+  ],
+
+  /* --- 본문 섹션 ---------------------------------------------------------
+     type 종류:  list(불릿) / rows(점선 정렬) / text(문단) / ng(경고) / tags(가로 나열)
+     순서를 바꾸거나 통째로 지워도 §번호는 자동으로 다시 매겨집니다.            */
+  sections: [
+    {
+      title:"ACCOUNT INFO", type:"list",
+      items:[
+        "AI 관련 사담 · NSFW 이야기 · 일상 등등 복합적인 용도로 사용하는 계정",
+        "제작자 관련 불만사항 이야기 잦음",
+        "여기서 드린 짤 업로드 시 닉네임 아무거나 써주셔도 OK",
+        "과거에 했던 드림 페르소나 언급 가끔 하는데 신경 안 써주셔도 됨",
+        "공계보다 더 자주 들여다 보는 계정이라 조금이라도 불편하면 바로 정리합니다! 사람 대 사람의 이유보다 성향 문제가 대부분이라 공계에서 봐요 ^w^♡"
+      ]
+    },
+    {
+      title:"DREAM", type:"rows",
+      rows:[
+        ["MAIN", "Fearless <strong>제스테</strong>"],
+        ["SUB",  "Arch <strong>블루</strong> · Aftermess <strong>9</strong>"]
+      ]
+    },
+    {
+      title:"NG", type:"ng",
+      items:[
+        "수동 저격 · 눈치 주기 등 피곤한 행동 전반에 대해 반응 일절 안 하고 관심 안 둡니다.",
+        "제가 하는 모든 이야기는 타임라인에 있는 분을 대상으로 하지 않습니다. 혹 그렇다 느끼셨다면 편히 디엠 주세요."
+      ]
+    },
+    {
+      title:"", type:"text",
+      items:[
+        "타임라인 편하게 쓰길 원하고, 함께하시는 분들도 그러셨으면 합니다. 관련해서 크게 불편함 느끼지 않고 뒷말 안 하고 오해도 안 하는데다 제 감정 제가 알아서 갈무리할 수 있을 정도의 나이는 되니까 너무 불편함 느끼지 마시고 정리 편하게 해주세요."
+      ]
+    }
+  ],
+
+  /* --- FILE 02: 페어 (사진 2장 + 관계 설명) ------------------------------
+     img 에는 아래 IMG 목록의 이름(p1~p6)을 넣거나 이미지 주소를 넣으면 됩니다.
+     mode 는 ONLY / CBC 처럼 짧은 표기, desc 를 비우면 설명 문단이 생략됩니다.   */
+  pairs: [
+    {
+      no:"PAIR 01", link:"MAIN",
+      a:{ code:"S-CLASS SENTINEL", name:"Jeste",    tag:"SENTINEL", line:"한재준", img:"p1" },
+      b:{ code:"A-CLASS GUIDE",    name:"Serenity", tag:"GUIDE",    line:"윤설아", img:"p2" },
+      title:"제스테 X 세레니티", mode:"ONLY",
+      desc:"1T1D 지향하나 안 되실 경우 유입만 조심해주셔도 됩니다. 지금껏 관련해서 불편함 느껴본 적 없습니다.",
+      tags:["제티","星海"]
+    },
+    {
+      no:"PAIR 02", link:"SUB",
+      a:{ code:"C-CLASS SENTINEL", name:"Blue",   tag:"SENTINEL", line:"윤재안", img:"p3" },
+      b:{ code:"A-CLASS GUIDE",    name:"Hecate", tag:"GUIDE",    line:"이소을", img:"p4" },
+      title:"블루 X 헤카테", mode:"CBC",
+      desc:"배려 따로 필요 없음. 겹드림과의 교류 필요성을 잘 느끼지 못 하는 정도의 성향.",
+      tags:["테루"]
+    },
+    {
+      no:"PAIR 03", link:"SUB",
+      a:{ code:"LURKER",  name:"9",         tag:"LURKER",  line:"권이겸", img:"p5" },
+      b:{ code:"HANDLER", name:"Gwendolyn", tag:"HANDLER", line:"백서리", img:"p6" },
+      title:"9 X 그웬돌린", mode:"CBC",
+      desc:"블루 드림 쪽과 성향 다를 것 없습니다.",
+      tags:["9wen","900"]
+    }
+  ],
+
+  endnote: "END OF FILE — REPRODUCTION AND REDISTRIBUTION PROHIBITED — LAST UPDATE 2026",
+
+  /* --- 부팅 화면 로그 (c: ok=앰버 / warn=빨강 / hi=흰색) ------------------ */
+  boot: [
+    {t:"$ ./archive --connect --secure", c:"hi", d:60},
+    {t:"установка соединения... 연결 시도 중", d:40},
+    {t:"[  OK  ] 보안 터널 확보 (AES-256)", c:"ok", d:30},
+    {t:"[  OK  ] 프록시 3중 경유 완료", c:"ok", d:30},
+    {t:"주소 확인: 127.0.0.1 → ██.███.██.█", d:35},
+    {t:"$ mount /dev/archive /mnt/subject", c:"hi", d:55},
+    {t:"블록 무결성 검사 ................ 98%", d:45},
+    {t:"블록 무결성 검사 ................ 100%", c:"ok", d:35},
+    {t:"[ WARN ] 열람 기록이 서버에 남습니다", c:"warn", d:70},
+    {t:"$ decrypt SUBJECT_FILE.enc", c:"hi", d:60},
+    {t:"키 교환 중 ......................", d:40},
+    {t:"복호화 진행 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%", c:"ok", d:50},
+    {t:"권한 확인: LEVEL 5 / 열람 허가됨", c:"ok", d:60},
+    {t:"", d:30},
+    {t:"  ██  ACCESS GRANTED  ██", c:"ok", d:80},
+    {t:"", d:20},
+    {t:"계속하려면 아래 버튼을 누르세요.", c:"hi", d:0}
+  ]
+};
+/* ============================================================================
+   ▲▲▲ 여기까지 ▲▲▲   아래는 건드리지 않아도 됩니다
+   ============================================================================ */
+
+/* ==========================================================================
+   ▲▲▲ 여기까지 ▲▲▲
+   ========================================================================== */
+
+/* 사진 파일 위치 — img 폴더 안의 파일명. 사진을 바꾸려면 같은 이름으로 덮어쓰면 됩니다. */
+const IMG = {
+  p1:"img/p1.jpg",
+  p2:"img/p2.jpg",
+  p3:"img/p3.jpg",
+  p4:"img/p4.jpg",
+  p5:"img/p5.jpg",
+  p6:"img/p6.jpg"
+};
+
+const $ = s => document.querySelector(s);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- 현상 시퀀스 ---------- */
+const STEPS = ["필름 감기","현상액 20°C","정지액","정착액","수세","건조","인화"];
+const logEl = $('#devLog');
+function row(t,ok){ return `<div class="devrow${ok?' done':''}"><span>${t}</span><span class="d"></span><span>${ok?'OK':'···'}</span></div>`; }
+function ready(){ const b=$('#enterBtn'); b.classList.add('on'); b.disabled=false;
+  $('#devBar').style.width='100%'; $('#devPct').textContent='100%'; }
+function boot(){
+  logEl.innerHTML=''; $('#devBar').style.width='0'; $('#devPct').textContent='00%';
+  $('#enterBtn').classList.remove('on'); $('#enterBtn').disabled=true;
+  if(reduce){ logEl.innerHTML=STEPS.map(t=>row(t,true)).join(''); ready(); return; }
+  let i=0;
+  (function step(){
+    if(i>=STEPS.length){ ready(); return; }
+    logEl.innerHTML = STEPS.slice(0,i+1).map((t,n)=>row(t,n<i)).join('');
+    const p=(i+1)/STEPS.length*100;
+    $('#devBar').style.width=p+'%'; $('#devPct').textContent=String(Math.round(p)).padStart(2,'0')+'%';
+    i++; setTimeout(step, 480);
+  })();
+}
+function finish(){ $('#boot').classList.remove('on'); $('#shell').classList.add('on'); }
+function reboot(){ $('#shell').classList.remove('on'); $('#boot').classList.add('on'); boot(); }
+
+/* ---------- 탭 ---------- */
+const PAGES=[{label:'NOTES',path:'SHEET 01',file:'ROLL 03 / SHEET 01'},
+             {label:'FRAMES',path:'SHEET 02',file:'ROLL 03 / SHEET 02'}];
+let cur=0;
+PAGES.forEach((p,i)=>{const b=document.createElement('button');
+  b.className='tab'+(i===0?' on':'');
+  b.innerHTML=`<span class="num">${String(i+1).padStart(2,'0')}</span>${p.label}`;
+  b.onclick=()=>go(i); $('#tabs').appendChild(b);});
+function go(i){
+  if(i<0||i>=PAGES.length) return; cur=i;
+  document.querySelectorAll('.tab').forEach((t,n)=>t.classList.toggle('on',n===i));
+  document.querySelectorAll('.screen').forEach((s,n)=>s.classList.toggle('on',n===i));
+  $('#tbPath').textContent=PAGES[i].path; $('#tbFile').textContent=PAGES[i].file;
+  $('#sbPage').textContent=String(i+1).padStart(2,'0')+' / '+String(PAGES.length).padStart(2,'0');
+  $('#prevBtn').disabled=i===0; $('#nextBtn').disabled=i===PAGES.length-1;
+  $('#main').scrollTop=0;
+}
+addEventListener('keydown',e=>{
+  const b=$('#boot').classList.contains('on');
+  if(e.key==='Escape'&&b) finish();
+  if(b) return;
+  if(e.key==='ArrowRight') go(cur+1);
+  if(e.key==='ArrowLeft') go(cur-1);
+  if(e.key==='r'||e.key==='R') reboot();
+});
+setInterval(()=>{const d=new Date();
+  $('#clock').textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(n=>String(n).padStart(2,'0')).join(':');},1000);
+
+/* ---------- 내용 ---------- */
+$('#sub').textContent = DATA.subline;
+$('#tickerTxt').textContent = DATA.ticker.repeat(12);
+$('#endnote').textContent = DATA.endnote;
+const kv=(k,v)=>`<div class="kv"><span class="k">${k}</span><span class="lead"></span><span class="v">${v}</span></div>`;
+$('#metaGrid').innerHTML = DATA.meta.map(([k,v])=>kv(k,v)).join('');
+
+const SEC={
+  text:s=>s.items.map(t=>`<p>${t}</p>`).join(''),
+  list:s=>`<ul class="bullets">${s.items.map(t=>`<li>${t}</li>`).join('')}</ul>`,
+  tags:s=>`<p>${s.items.join('   ·   ')}</p>`,
+  rows:s=>s.rows.map(([k,v])=>kv(k,v)).join(''),
+  ng  :s=>`<ul class="nglist">${s.items.map(t=>`<li>${t}</li>`).join('')}</ul>`
+};
+let n=0;
+$('#doc').innerHTML = DATA.sections.map(s=>{
+  const head = s.title ? `<h2><span class="id">${String(++n).padStart(2,'0')}</span>${s.title}</h2>` : '';
+  return `<div class="block${s.title?'':' untitled'}">${head}${(SEC[s.type]||SEC.text)(s)}</div>`;
+}).join('');
+
+function frame(x,no,mark){
+  if(!x) return '';
+  const src=(typeof IMG!=='undefined'&&IMG[x.img])?IMG[x.img]:x.img;
+  return `<div class="frame${mark?' mark':''}">
+    <div class="ph"><span class="ring"></span>
+      ${src?`<img src="${src}" alt="${x.name}">`:''}</div>
+    <div class="fno"><span>${no}</span><em>${x.tag}</em></div>
+  </div>`;
+}
+$('#pairList').innerHTML = DATA.pairs.map((p,i)=>{
+  const base=i*12+11;
+  return `<section class="strip">
+    <div class="strip-bar">
+      <span class="roll">${p.no||'STRIP '+(i+1)}</span>
+      <span>${p.a.name}${p.b?' × '+p.b.name:''}</span>
+      <span class="st">${p.link}</span>
+    </div>
+    <div class="strip-grid">
+      <div class="frames">
+        ${frame(p.a, base+'A', true)}
+        ${p.b?frame(p.b, base+'B', true):''}
+      </div>
+      <div class="strip-info">
+        <div class="roster">
+          ${kv('FRAME A', p.a.name+' · '+p.a.line)}
+          ${kv('CLASS', p.a.code)}
+          ${p.b?kv('FRAME B', p.b.name+' · '+p.b.line)+kv('CLASS', p.b.code):''}
+        </div>
+        <h3>${p.title}${p.mode?`<span class="mode">${p.mode}</span>`:''}</h3>
+        ${p.desc?`<p>${p.desc}</p>`:''}
+        <div class="tags"><b>TAGS</b>${p.tags.map(t=>`<span>#${t}</span>`).join('')}</div>
+      </div>
+    </div>
+  </section>`;
+}).join('');
+
+go(0); boot();
+</script>
+</body>
+</html>
