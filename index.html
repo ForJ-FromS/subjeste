@@ -183,6 +183,12 @@ h1.t{font-family:var(--mono);font-size:clamp(17px,2.4vw,22px);font-weight:500;le
   font-family:var(--kmono);font-size:11.5px;color:var(--dim)}
 .tags b{color:var(--line2);font-family:var(--mono);font-size:9px;letter-spacing:.2em;
   margin-right:10px;font-weight:400}
+.plink{margin-top:9px;padding-top:10px;border-top:1px solid var(--line);
+  display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.plink b{color:var(--line2);font-family:var(--mono);font-size:9px;letter-spacing:.2em;font-weight:400}
+.plink a{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--grease);
+  text-decoration:none;border-bottom:1px solid transparent;padding-bottom:1px;transition:.15s}
+.plink a:hover{border-bottom-color:var(--grease);color:var(--paper)}
 .tags span{margin-right:11px}
 
 
@@ -245,6 +251,54 @@ pre.pv{font-family:var(--mono);font-size:11.5px;line-height:1.85;color:#B6B1A6;b
 .pnote{border-left:2px solid var(--grease);padding-left:15px;margin-top:26px}
 .pnote h4{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:var(--grease);margin-bottom:9px}
 .pnote p{font-family:var(--kmono);font-size:12.5px;line-height:2;color:var(--ink);max-width:70ch}
+
+/* 페어 탭 */
+.ptabs{display:flex;border:1px solid var(--line);margin-bottom:24px;overflow-x:auto}
+.ptab{flex:1;min-width:118px;background:none;border:none;border-right:1px solid var(--line);
+  padding:11px 14px;cursor:pointer;text-align:left;transition:.15s}
+.ptab:last-child{border-right:none}
+.ptab .n{font-family:var(--kmono);font-size:13px;font-weight:700;color:var(--dim);display:block}
+.ptab .s{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;color:var(--line2);
+  display:block;margin-top:4px}
+.ptab:hover{background:#101011}
+.ptab:hover .n{color:var(--paper)}
+.ptab.on{background:#101011}
+.ptab.on .n{color:var(--grease)}
+.ptab.on .s{color:var(--dim)}
+.ppane{display:none}
+.ppane.on{display:block}
+
+/* 접이식 그룹 */
+.grp{border:1px solid var(--line);margin-bottom:14px;background:#0F0F10}
+.grp summary{list-style:none;cursor:pointer;padding:11px 14px;display:flex;align-items:center;
+  gap:11px;font-family:var(--kmono);font-size:13px;font-weight:700;color:var(--paper);
+  background:#131314;user-select:none}
+.grp summary::-webkit-details-marker{display:none}
+.grp summary .st{width:19px;height:19px;flex-shrink:0;display:grid;place-items:center;
+  border:1px solid var(--grease);color:var(--grease);font-family:var(--mono);font-size:9px}
+.grp summary .ar{margin-left:auto;font-size:9px;color:var(--line2);transition:transform .2s}
+.grp[open] summary .ar{transform:rotate(180deg)}
+.grp summary:hover{background:#171718}
+.gbody{padding:15px}
+.gsplit{display:grid;grid-template-columns:auto 1fr;gap:15px}
+.gsplit .gph{width:170px;border:1px solid var(--line2);background:#fff;overflow:hidden;align-self:start}
+.gsplit .gph img{width:100%;display:block}
+
+/* 코디 세트 */
+.oset{display:grid;grid-template-columns:auto 1fr;gap:15px;padding:14px 0;border-top:1px solid var(--line)}
+.oset.first{border-top:none;padding-top:0}
+.oset .oimg{width:158px;border:1px solid var(--line2);background:#fff;overflow:hidden;align-self:start}
+.oset .oimg img{width:100%;display:block}
+.oset-h{font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;color:var(--grease);
+  padding:14px 0 2px;border-top:1px solid var(--line);margin-top:6px}
+.oset-h.first{border-top:none;margin-top:0;padding-top:0}
+.snote{border-left:2px solid var(--grease);padding-left:12px;margin-top:11px;
+  font-family:var(--kmono);font-size:11.5px;line-height:1.9;color:var(--dim)}
+@media(max-width:820px){
+  .gsplit,.oset{grid-template-columns:1fr}
+  .gsplit .gph,.oset .oimg{width:100%;max-width:200px}
+}
+
 @media(max-width:820px){
   .pc-grid{grid-template-columns:1fr}
   .pc-ph{border-right:none;border-bottom:1px solid var(--line);justify-content:center}
@@ -408,7 +462,7 @@ const DATA = {
       no:"PAIR 01", link:"MAIN",
       a:{ code:"S-CLASS SENTINEL", name:"Jeste",    tag:"SENTINEL", line:"한재준", img:"p1" },
       b:{ code:"A-CLASS GUIDE",    name:"Serenity", tag:"GUIDE",    line:"윤설아", img:"p2" },
-      title:"제스테 X 세레니티", mode:"ONLY",
+      title:"제스테 X 세레니티", url:"https://luvlog.me/jeste", mode:"ONLY",
       desc:"1T1D 지향하나 안 되실 경우 유입만 조심해주셔도 됩니다. 지금껏 관련해서 불편함 느껴본 적 없습니다.",
       tags:["제티","星海"]
     },
@@ -416,7 +470,7 @@ const DATA = {
       no:"PAIR 02", link:"SUB",
       a:{ code:"C-CLASS SENTINEL", name:"Blue",   tag:"SENTINEL", line:"윤재안", img:"p3" },
       b:{ code:"A-CLASS GUIDE",    name:"Hecate", tag:"GUIDE",    line:"이소을", img:"p4" },
-      title:"블루 X 헤카테", mode:"CBC",
+      title:"블루 X 헤카테", url:"https://luvlog.me/blue", mode:"CBC",
       desc:"배려 따로 필요 없음. 겹드림과의 교류 필요성을 잘 느끼지 못 하는 정도의 성향.",
       tags:["테루"]
     },
@@ -424,7 +478,7 @@ const DATA = {
       no:"PAIR 03", link:"SUB",
       a:{ code:"LURKER",  name:"9",         tag:"LURKER",  line:"권이겸", img:"p5" },
       b:{ code:"HANDLER", name:"Gwendolyn", tag:"HANDLER", line:"백서리", img:"p6" },
-      title:"9 X 그웬돌린", mode:"CBC",
+      title:"9 X 그웬돌린", url:"https://luvlog.me/nine", mode:"CBC",
       desc:"블루 드림 쪽과 성향 다를 것 없습니다.",
       tags:["9wen","900"]
     }
@@ -465,7 +519,17 @@ const DATA = {
 const PIMG = {
   rep:"rep.jpg",
   m:"m.jpg",
-  f:"f.jpg"
+  f:"f.jpg",
+  jeti_hero:"jeti_hero.jpg",
+  j1:"j1.jpg",
+  j2:"j2.jpg",
+  j3:"j3.jpg",
+  j_sum:"j_sum.jpg",
+  j_win:"j_win.jpg",
+  teru_hero:"teru_hero.jpg",
+  t1:"t1.jpg",
+  t2:"t2.jpg",
+  t3:"t3.jpg"
 };
 
 const IMG = {
@@ -514,7 +578,7 @@ PAGES.forEach((p,i)=>{const b=document.createElement('button');
 
 /* ---------- 잠금 해제 ---------- */
 const SCREENS = ['s1','s2','s3'].map(id=>document.getElementById(id));
-const PAYLOAD = "SxFdX0RWEQoS35OsEN+tod2wr9ynoxPbl63fhqgT2YGA2K6MENmDsNyXotyJqxPckYPfkLjfrrAQ3r2I3aar2oK/E92lh9+TjN+3iNyppx4Q37es25WfENubi9uWn9+tqBPZgo3fqYAQ3qaE3b+/25afE9uYi9iWnBPZhZzeq7TcrocQ3K2rENymuxDbvI/ctK8T2oeL2LOVE9+rmN+uhNuLv9uRrxPbsqvfqbDYvLQQ2Yes3IOd3LqG2Lu42LiUHhEfElNbUkJDEQlrSxFQX1RWEQoSYGZyenZwZB0DBhIcEV1RXVYRChIKERwSQEZSEgkR2oa/362E2YGIEh8RWV1UEQoSXhEcElFfX1NYQBIKaGgS3KqL3aimERwSXlJcVR8TUVdWVxBFQx8QAR0GCgpeUkRFQVYKCh8TUlxSUFsQW1JZQh8TQ1hcQUQQW1JZQh8THQMJCVxfXVQQWFJaQgoJHxAAHQcKCl5WQ0NKE1hRWkEKCh8TAR4HCQpDR0FRWVRbRBBbUllCCQkcEAIdCQoJQ1FCR1ZUEFFSXlcJCRwQQ1JcVRNAW1ldHxAAHQsKClVcQlVbVlFUCQkcEFJBQl9UUl5EHxNTX11VWVRWXUQcEwkKREBGQlleVgoKHxNSXFJQWxBWSlVDHxNDXVpfVQoJHxBEXF1VVBNRX1RKHxAKCVFcUVBYEENYRlxcE0dRREdcX0MfE1JcUlBbEEBYVVxWR19eE0dRREdcX0MTXF4QUkFdQx8TUlxSUFsQR1JERFxcQxBcXRBeVlBbHBNXVURSWlxVVxNEUUdHX19ACQoSbh9rEt+uqNywshIcEVFcUVBYEERSUERZUFJcEFtaV1geXVVTWBNDWFxBRBBAX1VVRVYcEFBcXVJSRxBFXVpWX0FeEFZWUkRFQVpeVxNSEFNbVkNEE0FZVxNEWURbE0VEWl9ZREoTQF9GUFhVQB8QXVxXRVxSQRBHVlFSWV1UHBBCRllTWB5CVV9WUUNWE1JFUFhcVUAfEFldR1VXQVJEVVcTWFFBXVVDQFZDEm5uTRxIEVNfV1YSChFgZXJ5dnNkHgMGEh8RXlFeVhIKEQIAABEfEkNGURIKEdiAgd+3rNuVnxIcEVpdVxEJElYRHxJSX1xTW0ARCmtoEdypi96opREfEldaQVwcE1FcUVBYEFhSWkIcE0BYX0FHEENaV1UQW1JZQh8TR1haR1UQVkpVQx8TAR4KCQpHXF9WEFBGRBBbUllCHxNRQ0peXVVHQVlTUl8QUlJdV0MfEwoKHxMDHgYJClxcXVcQRFJGSRNRUVNYE1hRWkEKCh8TAB4GCQpEUkFVXVYJChBAX1lXW0dcSRNGQERGQV5VVxNVSVZAHBBRVlFFR1pWRV8TVFVfWlNRR1YQV1pBXBwTQ0VCVhNDW1pdHBAeAAoKR1JERFwfEFZcQVhVUlcKCh8TVUhDQVVDQFpfXl9WQ0MRbhxrEd+tqN+wsRIfEUdYWkdVEFBcXFxSQVVUE0BYWUFHHBBfXF5XE0BcVVZFVRwTUVxRUFgQXlZQW0RaVhwQW1JCXlZAQxwTUVxRUFgQQ1tcQkRAHxAYGERYWUdWEFtdVlUQQFxTW0AfEFJfUlNbE1JeW19WEFJcXERDGhFtbU5uTQ==";
+const PAYLOAD = "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";
 const CHECK   = "f3geCR0CAwA=";
 let unlocked = false;
 
@@ -540,30 +604,60 @@ function tryPw(){
 }
 
 function renderPrompt(P){
-  const rep = `<div class="rep">
-      <img src="${PIMG.rep}" alt="대표 이미지">
-      <div class="cap"><b>REF</b><span>9 × 100</span></div>
+  const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const blk = (lb,tx) => `
+    <div class="pblock">
+      <div class="plabel"><span>${lb}</span><span class="line"></span>
+        <button class="copy" onclick="copyTx(this)">COPY</button></div>
+      <pre class="pv">${esc(tx)}</pre>
     </div>`;
-  const cards = P.chars.map(c=>`
-    <section class="pc">
-      <div class="pc-bar">
-        <span>${c.code}</span><span class="nm">${c.name}</span>
-        <span class="sb">${c.sub}</span>
-      </div>
-      <div class="pc-grid">
-        <div class="pc-ph"><div class="in"><img src="${PIMG[c.img]}" alt="${c.name}"></div></div>
-        <div class="pc-body">
-          ${c.blocks.map(([lb,tx])=>`
-            <div class="pblock">
-              <div class="plabel"><span>${lb}</span><span class="line"></span>
-                <button class="copy" onclick="copyTx(this)">COPY</button></div>
-              <pre class="pv">${tx.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</pre>
-            </div>`).join('')}
-        </div>
-      </div>
-    </section>`).join('');
-  const note = `<div class="pnote"><h4>NOTE</h4><p>${P.note}</p></div>`;
-  $('#promptBody').innerHTML = rep + cards + note;
+
+  const group = g => {
+    let inner = '';
+    if(g.sets){
+      let firstH = true, firstS = true;
+      inner = g.sets.map(s=>{
+        let out = '';
+        if(s.h){ out += `<div class="oset-h${firstH?' first':''}">${s.h}</div>`; firstH=false; firstS=true; }
+        out += `<div class="oset${firstS && !s.h ? ' first':''}">
+            ${s.img?`<div class="oimg"><img src="${PIMG[s.img]||''}" alt=""></div>`:''}
+            <div>${s.rows.map(([lb,tx])=>blk(lb,tx)).join('')}
+              ${s.note?`<div class="snote">✎ ${esc(s.note)}</div>`:''}</div>
+          </div>`;
+        firstS = false;
+        return out;
+      }).join('');
+    }else{
+      const body = g.blocks.map(([lb,tx])=>blk(lb,tx)).join('');
+      inner = g.img && PIMG[g.img]
+        ? `<div class="gsplit"><div class="gph"><img src="${PIMG[g.img]}" alt="${g.t}"></div><div>${body}</div></div>`
+        : body;
+    }
+    return `<details class="grp">
+      <summary>${g.tag?`<span class="st">${g.tag}</span>`:''}<span>${g.t}</span><span class="ar">▼</span></summary>
+      <div class="gbody">${inner}</div>
+    </details>`;
+  };
+
+  const tabs = P.pairs.map((p,i)=>`
+    <button class="ptab${i===0?' on':''}" onclick="pgo(${i})">
+      <span class="n">${p.name}</span><span class="s">${p.sub}</span>
+    </button>`).join('');
+
+  const panes = P.pairs.map((p,i)=>`
+    <div class="ppane${i===0?' on':''}" id="pp${i}">
+      ${p.hero && PIMG[p.hero] ? `<div class="rep"><img src="${PIMG[p.hero]}" alt="${p.name}">
+        <div class="cap"><b>REF</b><span>${p.sub}</span></div></div>` : ''}
+      ${p.groups.map(group).join('')}
+      ${p.note ? `<div class="pnote"><h4>NOTE</h4><p>${esc(p.note)}</p></div>` : ''}
+    </div>`).join('');
+
+  $('#promptBody').innerHTML = `<div class="ptabs">${tabs}</div>${panes}`;
+}
+function pgo(i){
+  document.querySelectorAll('.ptab').forEach((t,n)=>t.classList.toggle('on',n===i));
+  document.querySelectorAll('.ppane').forEach((p,n)=>p.classList.toggle('on',n===i));
+  $('#main').scrollTop = 0;
 }
 function copyTx(btn){
   const tx = btn.closest('.pblock').querySelector('.pv').textContent;
@@ -651,6 +745,7 @@ $('#pairList').innerHTML = DATA.pairs.map((p,i)=>{
         <h3>${p.title}${p.mode?`<span class="mode">${p.mode}</span>`:''}</h3>
         ${p.desc?`<p>${p.desc}</p>`:''}
         <div class="tags"><b>TAGS</b>${p.tags.map(t=>`<span>#${t}</span>`).join('')}</div>
+        ${p.url?`<div class="plink"><b>LOG</b><a href="${p.url}" target="_blank" rel="noopener">${p.url.replace(/^https?:\/\//,'')} ↗</a></div>`:''}
       </div>
     </div>
   </section>`;
