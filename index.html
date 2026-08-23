@@ -703,7 +703,7 @@ function ph(x, cap){
   if(!x) return '';
   const src = (typeof IMG !== 'undefined' && IMG[x.img]) ? IMG[x.img] : x.img;
   return `<div class="p">${src ? `<img src="${src}" alt="${x.name}">` : ''}
-    <div class="c">${cap} · ${x.tag}</div></div>`;
+    <div class="c">${x.tag}</div></div>`;
 }
 $('#bd-pr').innerHTML = DATA.pairs.map((p,i)=>`
   <div class="pairbox">
