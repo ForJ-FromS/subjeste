@@ -263,6 +263,21 @@ pre.pv{ font-family:'SF Mono',Consolas,monospace; font-size:10.5px; line-height:
 #wg-memo p{ font-size:11.5px; line-height:1.85; color:var(--dim); margin:0 0 3px; }
 #wg-memo p:last-child{ margin-bottom:0; }
 
+/* ---------------- 달력 위젯 ---------------- */
+#wg-cal{ right:26px; top:158px; width:208px; padding:14px 17px 15px; }
+#wg-cal .h{ display:flex; align-items:center; gap:8px; margin-bottom:10px;
+  font-family:var(--qs); font-weight:700; font-size:8.5px; letter-spacing:.28em; color:var(--gold); }
+#wg-cal .h i{ font-style:normal; width:7px; height:7px; border-radius:50%; flex-shrink:0;
+  background:radial-gradient(circle at 32% 30%, #FFF6DC, var(--gold) 65%); }
+#wg-cal .h b{ margin-left:auto; font-weight:600; font-size:9px; letter-spacing:.12em; color:var(--dim); }
+#wg-cal .cg{ display:grid; grid-template-columns:repeat(7,1fr); gap:2px 0; text-align:center; }
+#wg-cal .dw{ font-family:var(--qs); font-weight:700; font-size:8px; letter-spacing:.06em;
+  color:var(--mute); padding-bottom:4px; }
+#wg-cal .dd{ font-family:var(--qs); font-weight:600; font-size:10px; line-height:1;
+  color:var(--dim); padding:4px 0; border-radius:6px; }
+#wg-cal .dd.now{ background:var(--gold); color:#123048; font-weight:700;
+  box-shadow:0 2px 8px rgba(240,212,146,.4); }
+
 /* ---------------- 사진 팝업 ---------------- */
 .photo{ position:absolute; z-index:2; padding:7px 7px 9px; background:rgba(255,255,255,.92);
   border-radius:5px; box-shadow:0 16px 40px rgba(2,14,26,.45), 0 2px 6px rgba(2,14,26,.25);
@@ -295,9 +310,15 @@ pre.pv{ font-family:'SF Mono',Consolas,monospace; font-size:10.5px; line-height:
   #wg-clock{ padding:20px 30px 19px; border-radius:22px; }
   #wg-clock .t{ font-size:52px; }
   #wg-clock .d{ font-size:12.5px; margin-top:5px; }
-  #wg-memo{ width:322px; padding:16px 20px 17px; border-radius:22px; }
+  #wg-memo{ left:140px; bottom:130px; width:322px; padding:16px 20px 17px; border-radius:22px; }
   #wg-memo .h{ font-size:10px; }
   #wg-memo p{ font-size:13px; }
+
+  #wg-cal{ top:172px; width:236px; padding:16px 20px 17px; border-radius:22px; }
+  #wg-cal .h{ font-size:10px; }
+  #wg-cal .h b{ font-size:10.5px; }
+  #wg-cal .dw{ font-size:9px; }
+  #wg-cal .dd{ font-size:11.5px; padding:5px 0; }
 }
 
 /* 메모는 모든 화면에서 왼쪽 아래 (기본 위치) */
@@ -336,6 +357,7 @@ pre.pv{ font-family:'SF Mono',Consolas,monospace; font-size:10.5px; line-height:
   </div>
 
   <div class="wg" id="wg-clock"><div class="t" id="wgTime">--:--</div><div class="d" id="wgDate"></div></div>
+  <div class="wg" id="wg-cal"><div class="h"><i></i>CALENDAR<b id="wgCalM"></b></div><div class="cg" id="wgCal"></div></div>
   <div class="wg" id="wg-memo"><div class="h"><i></i>MEMO</div><div id="wgMemo"></div></div>
 
   <div class="win" id="w-pf" style="left:17%; top:9%;">
@@ -596,6 +618,20 @@ document.querySelectorAll('.win').forEach(w=>{
   }
   setTimeout(ck, 15000);
 })();
+/* 달력 위젯 */
+(function(){
+  const c = $('#wgCal'); if(!c) return;
+  const d = new Date(), y = d.getFullYear(), m = d.getMonth(), today = d.getDate();
+  const first = new Date(y, m, 1).getDay(), last = new Date(y, m+1, 0).getDate();
+  let h = '';
+  ['S','M','T','W','T','F','S'].forEach(w => h += '<span class="dw">' + w + '</span>');
+  for(let i = 0; i < first; i++) h += '<span></span>';
+  for(let dd = 1; dd <= last; dd++)
+    h += '<span class="dd' + (dd === today ? ' now' : '') + '">' + dd + '</span>';
+  c.innerHTML = h;
+  const cm = $('#wgCalM');
+  if(cm) cm.textContent = y + '. ' + String(m+1).padStart(2,'0');
+})();
 /* 메모 위젯 */
 if($('#wgMemo')) $('#wgMemo').innerHTML =
   (DATA.memo || []).map(l=>`<p>${l}</p>`).join('');
@@ -607,7 +643,9 @@ const photoEls = [];
   const src = PIMG[p.img]; if(!src) return;
   const el = document.createElement('div');
   el.className = 'photo';
-  el.style.cssText = p.pos + ';width:' + p.w + 'px;transform:rotate(' + (p.rot||0) + 'deg);';
+  /* 데스크톱(가로 화면)에서만 사진 확대 */
+  const dScale = (innerWidth >= 760 && innerWidth > innerHeight) ? 1.2 : 1;
+  el.style.cssText = p.pos + ';width:' + Math.round(p.w * dScale) + 'px;transform:rotate(' + (p.rot||0) + 'deg);';
   el.innerHTML = '<span class="px">✕</span><img src="' + src + '" alt="">';
   $('#desk').appendChild(el);
   photoEls.push(el);
@@ -839,8 +877,8 @@ $('#desk').addEventListener('dblclick', e=>{
   });
 })();
 
-/* 시작: 프로필 창 열기 */
-openW('pf', true);
+/* 시작: 프로필 창 열기 (데스크톱만 — 모바일·태블릿 세로는 닫힌 상태로 시작) */
+if(!(innerHeight > innerWidth || innerWidth < 760)) openW('pf', true);
 </script>
 </body>
 </html>
